@@ -1,34 +1,19 @@
-import React, { useState } from 'react';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ProtectedRoutes from "./components/routes/ProtectedRoutes";
+import HomePage from "./components/HomePage";
+import DashboardPage from "./components/DashboardPage";
+import Navbar from "./components/NavBar";
 
-function App() {
-  const [term, setTerm] = useState<string>('');
-  const [location, setLocation] = useState<string>('');
-
-  const handleSubmit = () => {
-    // Handle API call here or send data to a backend server
-    console.log('Term:', term, 'Location:', location);
-  };
-
+const App = () => {
   return (
-    <div className="App">
-      <h1>Yelp Business Search</h1>
-      <div>
-        <input 
-          type="text"
-          placeholder="Search term..."
-          value={term}
-          onChange={(e) => setTerm(e.target.value)}
-        />
-        <input 
-          type="text"
-          placeholder="Location..."
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-        />
-        <button onClick={handleSubmit}>Search</button>
-      </div>
-    </div>
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/dashboard" element={<ProtectedRoutes><DashboardPage /></ProtectedRoutes>} />
+        </Routes>
+      </Router>
   );
 }
 
