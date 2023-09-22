@@ -10,7 +10,7 @@ const App = () => {
       <Router>
         <Navbar />
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<ProtectedRoutes><HomePage /></ProtectedRoutes>} />
           <Route path="/dashboard" element={<ProtectedRoutes><DashboardPage /></ProtectedRoutes>} />
         </Routes>
       </Router>

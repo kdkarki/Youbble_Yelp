@@ -19,6 +19,8 @@ const providerConfig = {
   },
 };
 
+console.log(providerConfig);
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );

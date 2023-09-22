@@ -3,9 +3,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import LogoutButton from './LogoutButton';
 
 const DashboardPage: React.FC = () => {
-    const { user, isAuthenticated } = useAuth0();
-
-    if (!isAuthenticated) return <p>Loading...</p>;
+    const { user } = useAuth0();
 
     return (
         <div>

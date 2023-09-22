@@ -1,20 +1,20 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { Navigate, Route, RouteProps } from 'react-router-dom';
-import DashboardPage from '../DashboardPage';
+import { RouteProps } from 'react-router-dom';
 
 const ProtectedRoute: React.FC<RouteProps> = (props) => {
-    const { isAuthenticated } = useAuth0();
+    const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
+
+    useEffect(() => {
+        if (!isLoading && !isAuthenticated) {
+            loginWithRedirect();
+        }
+    }, [isAuthenticated, isLoading, loginWithRedirect]);
 
     if (isAuthenticated) {
-        //return <Route {...props} />;
-        return <DashboardPage />;
+        return <div {...props}></div>;
     } else {
-        //return <Navigate to="/" replace />;
-        return<>
-        {'this is dashboard page'}
-        <DashboardPage />;
-        </>
+        return <div>Loading...</div>
     }
 };
 
