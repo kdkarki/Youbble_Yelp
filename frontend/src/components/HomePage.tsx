@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import ResultsTable from './ResultsTable';
 import { searchYelp } from '../api/fetchData';
 import { Business } from '../@types/Business';
-import authconfig from '../auth_config.json';
 
 const Container = styled.div`
   max-width: 800px;

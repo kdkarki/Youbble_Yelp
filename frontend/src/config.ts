@@ -14,13 +14,13 @@ export const getConfig = (): Config => {
     // If this resolves to `null`, the API page changes to show some helpful info about what to do
     // with the audience.
     const audience: string | null =
-        configJson.audience && configJson.audience !== "YOUR_API_IDENTIFIER"
-        ? configJson.audience
+        process.env.REACT_APP_AUDIENCE && process.env.REACT_APP_AUDIENCE !== "YOUR_API_IDENTIFIER"
+        ? process.env.REACT_APP_AUDIENCE
         : null;
 
     return {
-        domain: configJson.domain,
-        clientId: configJson.clientId,
+        domain: process.env.REACT_APP_DOMAIN ?? '',
+        clientId: process.env.REACT_APP_CLIENTID ?? '',
         ...(audience ? { audience } : {}),
     };
 }
