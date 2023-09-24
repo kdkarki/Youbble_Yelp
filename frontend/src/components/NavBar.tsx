@@ -43,7 +43,7 @@ const Navbar: React.FC = () => {
             <Title>Youbbler Yelp</Title>
             {isAuthenticated && (
                 <UserInfo>
-                    <UserEmail>{user!.email}</UserEmail>
+                    <UserEmail>{user?.email}</UserEmail>
                     <ButtonGroup>
                         <LogoutButton />
                     </ButtonGroup>

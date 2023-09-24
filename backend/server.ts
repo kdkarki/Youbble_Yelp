@@ -1,51 +1,32 @@
 import express, { Request, Response } from 'express';
-import mongoose from 'mongoose';
+//import mongoose from 'mongoose';
+import cors from 'cors';
+import { auth, requiredScopes } from 'express-oauth2-jwt-bearer';
+import yelpSearchRoute from './routes/yelpSearch';
+import userRequestRoute from './routes/userRequest';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 const port: number = 8080;
 
-// Define mongoose schema & model
-interface IAccessRequest extends mongoose.Document {
-    userId: string;
-    requestedRole: string;
-    status: string;
-}
 
-const AccessRequestSchema = new mongoose.Schema({
-    userId: String,
-    requestedRole: String,
-    status: String
-});
-
-const AccessRequest = mongoose.model<IAccessRequest>('AccessRequest', AccessRequestSchema);
+// Authorization middleware. When used, the Access Token must
+// exist and be verified against the Auth0 JSON Web Key Set.
+const checkJwt = auth({
+    audience: process.env.AUTH0_AUDIENCE,
+    issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
+  });
 
 // Connect to MongoDB
-mongoose.connect('mongodb://mymongo_instance:27017/mydatabase');
+//mongoose.connect('mongodb://mymongo_instance:27017/mydatabase');
 
+app.use(cors());
 app.use(express.json());
 
-app.post('/request-access', (req: Request, res: Response) => {
-    // Store the user's access request in MongoDB
-    const accessRequest = new AccessRequest({
-        userId: req.body.userId, // Example: Ideally, this should come from an authenticated user's ID.
-        requestedRole: req.body.requestedRole,
-        status: 'Pending'
-    });
+app.use('/api/access', checkJwt, userRequestRoute);
 
-    /* accessRequest.save(() => {
-        //if (err) return res.status(500).send(err);
-        return res.status(200).send({ message: 'Access request saved successfully!' });
-    }); */
-});
-
-app.get('/admin/pending-requests', (req: Request, res: Response) => {
-    // Fetch and return all pending access requests for admin users
-    AccessRequest.find({ status: 'Pending' }, (err: any, requests: any) => {
-        if (err) return res.status(500).send(err);
-        return res.status(200).send(requests);
-    });
-});
-
-// ... More routes
+app.use('/api', checkJwt, yelpSearchRoute);
 
 app.listen(port, () => console.log(`Backend server started on port ${port}`));

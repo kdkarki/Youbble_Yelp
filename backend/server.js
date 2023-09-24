@@ -4,37 +4,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const mongoose_1 = __importDefault(require("mongoose"));
+//import mongoose from 'mongoose';
+const cors_1 = __importDefault(require("cors"));
+const yelpSearch_1 = __importDefault(require("./routes/yelpSearch"));
+const userRequest_1 = __importDefault(require("./routes/userRequest"));
 const app = (0, express_1.default)();
 const port = 8080;
-const AccessRequestSchema = new mongoose_1.default.Schema({
-    userId: String,
-    requestedRole: String,
-    status: String
-});
-const AccessRequest = mongoose_1.default.model('AccessRequest', AccessRequestSchema);
+// Authorization middleware. When used, the Access Token must
+// exist and be verified against the Auth0 JSON Web Key Set.
+/* const checkJwt = auth({
+    audience: process.env.AUTH0_AUDIENCE,
+    issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
+  }); */
 // Connect to MongoDB
-mongoose_1.default.connect('mongodb://mymongo_instance:27017/mydatabase');
+//mongoose.connect('mongodb://mymongo_instance:27017/mydatabase');
+app.use((0, cors_1.default)());
 app.use(express_1.default.json());
-app.post('/request-access', (req, res) => {
-    // Store the user's access request in MongoDB
-    const accessRequest = new AccessRequest({
-        userId: req.body.userId,
-        requestedRole: req.body.requestedRole,
-        status: 'Pending'
-    });
-    /* accessRequest.save(() => {
-        //if (err) return res.status(500).send(err);
-        return res.status(200).send({ message: 'Access request saved successfully!' });
-    }); */
-});
-app.get('/admin/pending-requests', (req, res) => {
-    // Fetch and return all pending access requests for admin users
-    AccessRequest.find({ status: 'Pending' }, (err, requests) => {
-        if (err)
-            return res.status(500).send(err);
-        return res.status(200).send(requests);
-    });
-});
-// ... More routes
+app.use('/api/access', userRequest_1.default);
+app.use('/api', yelpSearch_1.default);
 app.listen(port, () => console.log(`Backend server started on port ${port}`));
