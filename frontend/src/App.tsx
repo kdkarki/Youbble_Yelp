@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useAuth0 } from '@auth0/auth0-react';
 import ProtectedRoutes from "./components/routes/ProtectedRoutes";
 import HomePage from "./components/HomePage";
 import DashboardPage from "./components/DashboardPage";
 import Navbar from "./components/NavBar";
 
 const App = () => {
+  
   return (
       <Router>
         <Navbar />
