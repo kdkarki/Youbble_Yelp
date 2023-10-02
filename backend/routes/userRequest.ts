@@ -1,6 +1,7 @@
 import express, { Request, Response, Router } from 'express';
 import mongoose from 'mongoose';
 import { IAccessRequest, AccessRequestSchema } from '../database/accessRequest';
+import { User } from '../Models/User';
 
 const router: Router = express.Router();
 
@@ -23,10 +24,10 @@ router.post('/request-access', (req: Request, res: Response) => {
 router.get('/role', async (req: Request, res: Response) => {
     try {
       // Obtain user from the request (e.g., from the JWT token)
-      const userId = req.auth?.sub;
+      const userAuthId = req.auth?.sub;
   
       // Fetch the user role from your database
-      const role = '';//await getUserRole(userId);
+      const role = userAuthId ? await getUserRole(userAuthId) : null;
   
       if (role) {
         res.json({ hasRole: true, role });
@@ -52,5 +53,14 @@ router.get('/role', async (req: Request, res: Response) => {
     }
   });
   
+  const getUserRole = async (userAuthId: string): Promise<string | null> => {
+    try{
+    const user = await User.findOne({authId: userAuthId}) //await User.findById(userId).exec();
+    return user && user.role ? user.role : null;
+    } catch (error) {
+      console.log(error);
+        throw error;
+    }
+  }
 
 export default router;

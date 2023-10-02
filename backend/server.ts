@@ -28,8 +28,9 @@ const checkJwt =
     issuer: `${process.env.AUTH0_ISSUER_BASE_URL}/`, //make sure there is trailing / here
     algorithms: ['RS256']
   });
+
 // Connect to MongoDB
-//mongoose.connect('mongodb://mymongo_instance:27017/mydatabase');
+mongoose.connect(process.env.MONGODB_URI ?? 'mongodb://mymongo_instance:27017/mydatabase');
 
 app.use(cors());
 app.use(express.json());
@@ -37,5 +38,11 @@ app.use(express.json());
 app.use('/api/user', checkJwt, userRequestRoute);
 
 app.use('/api', checkJwt, yelpSearchRoute);
+
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).send('Invalid token.');
+  }
+});
 
 app.listen(port, () => console.log(`Backend server started on port ${port}`));
