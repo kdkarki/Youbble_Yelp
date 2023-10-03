@@ -5,17 +5,23 @@ import ProtectedRoutes from "./components/routes/ProtectedRoutes";
 import HomePage from "./components/HomePage";
 import DashboardPage from "./components/DashboardPage";
 import Navbar from "./components/NavBar";
+import { AuthProvider } from "./contexts/AuthContext";
+import AppContainer from "./components/AppContainer";
 
 const App = () => {
   
   return (
-      <Router>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<ProtectedRoutes><HomePage /></ProtectedRoutes>} />
-          <Route path="/dashboard" element={<ProtectedRoutes><DashboardPage /></ProtectedRoutes>} />
-        </Routes>
-      </Router>
+    <AuthProvider>
+      <AppContainer>
+        <Router>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<ProtectedRoutes><HomePage /></ProtectedRoutes>} />
+            <Route path="/dashboard" element={<ProtectedRoutes><DashboardPage /></ProtectedRoutes>} />
+          </Routes>
+        </Router>
+      </AppContainer>
+    </AuthProvider>
   );
 }
 
