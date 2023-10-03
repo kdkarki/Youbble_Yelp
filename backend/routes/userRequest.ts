@@ -27,13 +27,9 @@ router.get('/role', async (req: Request, res: Response) => {
       const userAuthId = req.auth?.sub;
   
       // Fetch the user role from your database
-      const role = userAuthId ? await getUserRole(userAuthId) : null;
+      const roles = userAuthId ? await getUserRole(userAuthId) : null;
   
-      if (role) {
-        res.json({ hasRole: true, role });
-      } else {
-        res.json({ hasRole: false });
-      }
+      res.json({ roles });
     } catch (error) {
       res.status(500).send('Error checking user role');
     }
@@ -53,10 +49,10 @@ router.get('/role', async (req: Request, res: Response) => {
     }
   });
   
-  const getUserRole = async (userAuthId: string): Promise<string | null> => {
+  const getUserRole = async (userAuthId: string): Promise<string[]> => {
     try{
-    const user = await User.findOne({authId: userAuthId}) //await User.findById(userId).exec();
-    return user && user.role ? user.role : null;
+    const user = await User.findOne({authId: userAuthId}); //await User.findById(userId).exec();
+    return user?.roles ?? [];
     } catch (error) {
       console.log(error);
         throw error;

@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
     authId: String,
     email: String,
-    role: String
+    roles: [String] || null
   });
   
   export const User = mongoose.model('User', userSchema);
