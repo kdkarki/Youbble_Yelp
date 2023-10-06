@@ -1,13 +1,43 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
+import { useSnackbar } from 'notistack';
 import '../css/RoleRequest.css';
+import { useAuth } from '../contexts/AuthContext';
+import { fetchRequestedUserRole, requestUserRole } from '../api/fetchData';
 
 const RoleRequest: React.FC = () => {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [requestMade, setRequestMade] = useState(false);
+  const userEmail = useAuth().idToken?.email;
+  const { getAccessTokenSilently } = useAuth0();
+  const { enqueueSnackbar } = useSnackbar();
 
-  const handleSubmit = () => {
-    if (selectedRole) {
-      // Handle the role request, e.g., send it to your backend or Auth0 rules or hooks.
-      console.log(`Requested role: ${selectedRole}`);
+  useEffect(() => {
+    const getRequestedRole = async () => {
+      if (userEmail) {
+        const response = await fetchRequestedUserRole(await getAccessTokenSilently());
+        if (response?.requestedRole) {
+          setSelectedRole(response.requestedRole);
+          setRequestMade(true);
+        }
+      }
+    };
+    getRequestedRole();
+  }, []);
+
+  const handleSubmit = async () => {
+    if (selectedRole && userEmail) {
+      try{
+        const response = await requestUserRole(await getAccessTokenSilently(), selectedRole, userEmail);
+        if(response?.status == 200) {
+          setRequestMade(true);
+          enqueueSnackbar('Role requested', { variant: 'success' });
+        } else {
+          enqueueSnackbar(response?.message ?? 'Error requesting role', { variant: 'error' });
+        }
+      } catch (e) {
+        enqueueSnackbar('Error requesting role', { variant: 'error' });
+      }
     }
   };
 
@@ -23,6 +53,7 @@ const RoleRequest: React.FC = () => {
             value="user"
             checked={selectedRole === 'user'}
             onChange={() => setSelectedRole('user')}
+            disabled={requestMade}
           />
           User
         </label>
@@ -34,12 +65,13 @@ const RoleRequest: React.FC = () => {
             value="admin"
             checked={selectedRole === 'admin'}
             onChange={() => setSelectedRole('admin')}
+            disabled={requestMade}
           />
           Admin
         </label>
       </div>
 
-      <button onClick={handleSubmit}>Submit Request</button>
+      <button onClick={handleSubmit} disabled={requestMade}>Submit Request</button>
     </div>
   );
 };

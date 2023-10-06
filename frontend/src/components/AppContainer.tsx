@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { IdToken, useAuth0 } from '@auth0/auth0-react';
+import { SnackbarProvider } from 'notistack';
 import { fetchUserRole } from '../api/fetchData';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -34,7 +35,9 @@ const AppContainer: React.FC<AppContainerProps> = ({ children }) => {
     }
 }, [isAuthenticated, isLoading, loginWithRedirect]);
 
-  return <>{children}</>;  // Here, you can pass roles and idToken as props if needed
+  return <SnackbarProvider maxSnack={3}>
+    {children}
+    </SnackbarProvider>;  // Here, you can pass roles and idToken as props if needed
 };
 
 export default AppContainer;
