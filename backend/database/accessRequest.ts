@@ -6,11 +6,15 @@ export interface IAccessRequest extends mongoose.Document {
     email: string;
     requestedRole: string;
     status: string;
+    approvedBy?: string;
+    approvedDate?: Date;
 }
 
 export const AccessRequestSchema = new mongoose.Schema({
     userId: String,
     email: String,
     requestedRole: String,
-    status: String
+    status: String,
+    approvedBy: String,
+    approvedDate: Date
 });

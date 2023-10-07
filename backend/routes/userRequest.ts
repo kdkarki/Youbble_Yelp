@@ -51,20 +51,6 @@ router.get('/role', async (req: Request, res: Response) => {
     res.status(500).send('Error checking user role');
   }
 });
-
-router.post('/assign-role', async (req: Request, res: Response) => {
-  try {
-    const userId = req.auth?.sub;
-    const { role } = req.body;
-
-    // Store the role in your database
-    //await assignRoleToUser(userId, role);
-
-    res.json({ success: true });
-  } catch (error) {
-    res.status(500).send('Error assigning role');
-  }
-});
   
 const getUserRole = async (userId: string): Promise<string[]> => {
   try{

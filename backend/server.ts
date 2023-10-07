@@ -6,6 +6,8 @@ import jwksRsa, { expressJwtSecret } from 'jwks-rsa';
 import yelpSearchRoute from './routes/yelpSearch';
 import userRequestRoute from './routes/userRequest';
 import dotenv from 'dotenv';
+import manageAccessRequest from './routes/manageAccessRequest';
+import { checkUserRole } from './middleware/checkUserRole';
 
 dotenv.config();
 
@@ -36,6 +38,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/user', checkJwt, userRequestRoute);
+
+app.use('/api/admin', checkJwt, manageAccessRequest);
 
 app.use('/api', checkJwt, yelpSearchRoute);
 
