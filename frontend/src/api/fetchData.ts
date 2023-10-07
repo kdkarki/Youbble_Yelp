@@ -65,3 +65,38 @@ export const requestUserRole = async (token: string, userRole: string, userEmail
     console.error("Error submitting role request:", error);
   }
 };
+
+export const fetchAccessRequests = async (token: string) => {
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/access-requests`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching access requests:", error);
+  }
+}
+
+export const assignUserRole = async (token: string, userId: string, role: string) => {
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/admin/assign-role/${userId}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ role })
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error assigning role:", error);
+  }
+}
