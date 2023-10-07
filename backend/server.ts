@@ -39,7 +39,7 @@ app.use(express.json());
 
 app.use('/api/user', checkJwt, userRequestRoute);
 
-app.use('/api/admin', checkJwt, manageAccessRequest);
+app.use('/api/admin', checkJwt, checkUserRole('admin'), manageAccessRequest);
 
 app.use('/api', checkJwt, yelpSearchRoute);
 
