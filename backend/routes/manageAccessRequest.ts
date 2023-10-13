@@ -8,7 +8,7 @@ const AccessRequest = mongoose.model<IAccessRequest>('AccessRequest', AccessRequ
 
 router.get('/access-requests', async (req: Request, res: Response) => {
     try {
-        const accessRequests = await AccessRequest.find({status: 'Pending'});
+        const accessRequests = await AccessRequest.find();
         res.json({ accessRequests });
     } catch (error) {
         res.status(500).send('Error fetching access requests');
@@ -22,7 +22,9 @@ router.post('/assign-role/:id', async (req: Request, res: Response) => {
 
         //get pending access request
         const pendingAccessRequest = await AccessRequest.findOne({userId: userId, status: 'Pending'});
-
+        if(!pendingAccessRequest) {
+            throw new Error('No pending access request found');
+        }
         const createUser = await User.create({userId: userId, email: pendingAccessRequest?.email, roles: [role]});
         if (!createUser) {
             return res.status(500).send('Error creating user');
@@ -34,8 +36,8 @@ router.post('/assign-role/:id', async (req: Request, res: Response) => {
             approvedDate: new Date()});
 
         res.json({ success: true });
-        } catch (error) {
-        res.status(500).send('Error assigning role');
+        } catch (error: Error | any) {
+        res.status(500).send(`Error assigning role. Error message: ${error?.message}`);
         }
   });
 
