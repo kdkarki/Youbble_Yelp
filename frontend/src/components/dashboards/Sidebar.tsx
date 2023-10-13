@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useAuth } from '../../contexts/AuthContext';
 
 const SidebarContainer = styled.div`
   width: 250px;
@@ -30,15 +31,17 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onDashboardClick, onAccessRequestClick, onJobViewClick }) => {
+  const { roles } = useAuth();
   return (
     <SidebarContainer>
       <SidebarItem onClick={onDashboardClick}>
         <Icon>📊</Icon> Dashboard
       </SidebarItem>
-      { /* If the user is an admin */ }
-      <SidebarItem onClick={onAccessRequestClick}>
-        <Icon>👥</Icon> Access Requests
-      </SidebarItem>
+      { roles && roles.includes("admin") && 
+        <SidebarItem onClick={onAccessRequestClick}>
+          <Icon>👥</Icon> Access Requests
+        </SidebarItem>
+      }
       <SidebarItem onClick={onJobViewClick}>
         <Icon>🚀</Icon> Jobs
       </SidebarItem>
