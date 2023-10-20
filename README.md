@@ -24,3 +24,7 @@ The **frontend** must be configured to use the same AuthO tenant. The frontend m
 * REACT_APP_AUTH0_DOMAIN: this is the domain of the AuthO tenant. Example: dev-xxxxxx.us.auth0.com
 * REACT_APP_AUTH0_AUDIENCE: this is the audience of the AuthO tenant. Example: https://dev-xxxxxx.us.auth0.com/api/v2/
 * REACT_APP_CLIENT_ID: this is the client id of the AuthO tenant. Example: 1234567890
+
+### Yelp Api
+Yelp Api is used to retrieve the data. To use Yelp Api, following environment variables must be available in **backend**
+* YELP_API_KEY: this is the api key of the Yelp Api. Example: 1234567890

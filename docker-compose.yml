@@ -7,10 +7,15 @@ services:
     image: mongo:latest
     ports:
       - "27017:27017"
+    volumes:
+      - ./mongo-init:/docker-entrypoint-initdb.d
+    environment:
+      MONGO_INITDB_DATABASE: mydatabase
 
   backend:
     build:
       context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     depends_on:
@@ -19,6 +24,7 @@ services:
   frontend:
     build:
       context: ./frontend
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     depends_on:
