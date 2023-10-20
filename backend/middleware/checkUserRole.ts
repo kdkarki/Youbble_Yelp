@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { User } from '../Models/User';
 
-export const checkUserRole = (requiredRole: string) => {
+export const checkUserRole = (requiredRoles: string[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const user = req.auth?.sub; // Assuming the decoded JWT payload is attached to req.user by express-jwt
 
@@ -10,7 +10,7 @@ export const checkUserRole = (requiredRole: string) => {
     }
 
     const userRole = await getUserRole(user);
-    if (userRole?.includes(requiredRole)) {
+    if (userRole?.some((uRole) => requiredRoles.includes(uRole))) {
       return next();
     }
 

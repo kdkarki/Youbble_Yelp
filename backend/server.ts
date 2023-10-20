@@ -39,9 +39,9 @@ app.use(express.json());
 
 app.use('/api/user', checkJwt, userRequestRoute);
 
-app.use('/api/admin', checkJwt, checkUserRole('admin'), manageAccessRequest);
+app.use('/api/admin', checkJwt, checkUserRole(['admin']), manageAccessRequest);
 
-app.use('/api', checkJwt, yelpSearchRoute);
+app.use('/api', checkJwt, checkUserRole(['admin', 'user']), yelpSearchRoute);
 
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   if (err.name === 'UnauthorizedError') {

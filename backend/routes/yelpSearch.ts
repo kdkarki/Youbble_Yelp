@@ -1,47 +1,43 @@
-import express, { Request, Response, Router } from 'express';
+import { Router } from 'express';
+import axios from 'axios';
 
-const router: Router = express.Router();
+const router = Router();
+//const YELP_API_KEY = process.env.YELP_API_KEY; // Replace this with your Yelp API Key
 
-const mockYelpResponse = 
-{
-  "businesses": [
-    {
-      "id": "9j3LpUwW9OyK6W3qPdGh1g",
-      "name": "Good Eats Cafe 12",
-      "location": {
-        "address1": "123 Food St",
-        "city": "Yummytown",
-        "zip_code": "12345",
-        "country": "US",
-        "state": "CA"
-      },
-      "rating": 4.5,
-      "phone": "+15551234567",
-      "image_url": "https://example.com/image1.jpg",
-      "price": "$$"
-    },
-    {
-      "id": "8k2LpUeM6OyH5G3bPdZx5h",
-      "name": "Cozy Corner",
-      "location": {
-        "address1": "456 Cozy Ln",
-        "city": "Relaxville",
-        "zip_code": "67890",
-        "country": "US",
-        "state": "TX"
-      },
-      "rating": 4.0,
-      "phone": "+15559876543",
-      "image_url": "https://example.com/image2.jpg",
-      "price": "$"
+router.get('/yelp-search', async (req, res) => {
+    const { zipcode, searchTerm } = req.query;
+
+    if (!zipcode || !searchTerm) {
+        return res.status(400).send({ error: 'Both zipcode and searchTerm are required.' });
     }
-  ],
-  "total": 2
-};
 
+    const data: {businesses: [], total: number} = {businesses: [], total: 0};
+    let offset = 0;
+    
+    try {
+        while(true) {
+            const yelpResponse = await axios.get('https://api.yelp.com/v3/businesses/search', {
+                headers: {
+                    'Authorization': `Bearer ${process.env.YELP_API_KEY}`,
+                },
+                params: {
+                    location: zipcode,
+                    term: searchTerm,
+                    limit: 50
+                },
+            });
+            data.businesses.push(...yelpResponse.data.businesses as []);
+            offset += 50;
+            if (offset >= yelpResponse.data.total) {
+                data.total = yelpResponse.data.total as number;
+                break;
+            }
+        }
 
-router.post('/yelp-search', (req: Request, res: Response) => {
-  res.json(mockYelpResponse);
+        res.send(data);
+    } catch (error) {
+        res.status(500).send({ error: 'Failed to fetch data from Yelp.' });
+    }
 });
 
 export default router;
